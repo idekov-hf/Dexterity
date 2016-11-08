@@ -23,7 +23,7 @@ class Button: SKSpriteNode {
     
     init(number: Int) {
         self.number = number
-        super.init(texture: nil, color: UIColor.red, size: CGSize.init(width: CGFloat(50), height: CGFloat(50)))
+        super.init(texture: nil, color: UIColor.red, size: CGSize.init(width: CGFloat(60), height: CGFloat(60)))
         isUserInteractionEnabled = true
     }
     

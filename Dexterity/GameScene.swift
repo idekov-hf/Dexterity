@@ -19,10 +19,10 @@ class GameScene: SKScene {
     }
     
     func setupButtons() {
-        for number in 0...2 {
+        for number in 0...3 {
             let button = Button(number: number)
             button.delegate = self
-            button.position = CGPoint(x: size.width * 0.25 * CGFloat(number + 1), y: size.height * 0.5)
+            button.position = CGPoint(x: size.width * 0.20 * CGFloat(number + 1), y: size.height * 0.5)
             if number == 0 {
                 button.unlocked = true
             }
@@ -45,15 +45,21 @@ class GameScene: SKScene {
 extension GameScene: ButtonDelegate {
     func didTouchButton(number: Int) {
         let nextNumber = number + 1
-        if buttons[number].unlocked && nextNumber < buttons.count && !buttons[nextNumber].pressed {
-            buttons[nextNumber].unlocked = true
+        if buttons[number].unlocked {
+            if nextNumber < buttons.count && !buttons[nextNumber].pressed {
+                buttons[nextNumber].unlocked = true
+            } else if number == buttons.count - 1 {
+                print("Pressed buttons in correct sequence!")
+            }
         }
     }
     
     func didReleaseButton(number: Int) {
         if buttons[number].unlocked {
             for i in number + 1 ..< buttons.count {
-                print(i)
+                if !buttons[i].unlocked {
+                    break
+                }
                 buttons[i].unlocked = false
             }
         }
