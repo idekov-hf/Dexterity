@@ -20,10 +20,11 @@ class Button: SKSpriteNode {
         }
     }
     var pressed = false
+    var canBeReleased = false
     
     init(number: Int) {
+        super.init(texture: nil, color: UIColor.red, size: CGSize.init(width: CGFloat(70), height: CGFloat(70)))
         self.number = number
-        super.init(texture: nil, color: UIColor.red, size: CGSize.init(width: CGFloat(60), height: CGFloat(60)))
         isUserInteractionEnabled = true
     }
     
