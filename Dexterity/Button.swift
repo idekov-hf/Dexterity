@@ -16,14 +16,18 @@ class Button: SKSpriteNode {
     var number: Int = 0
     var unlocked = false {
         didSet {
-            color = unlocked ? UIColor.green : UIColor.red
+            setColor()
         }
     }
-    var pressed = false
+    var pressed = false {
+        didSet {
+            setColor()
+        }
+    }
     var canBeReleased = false
     
     init(number: Int) {
-        super.init(texture: nil, color: UIColor.red, size: CGSize.init(width: CGFloat(70), height: CGFloat(70)))
+        super.init(texture: nil, color: UIColor.red, size: CGSize.init(width: CGFloat(80), height: CGFloat(80)))
         self.number = number
         isUserInteractionEnabled = true
     }
@@ -40,6 +44,10 @@ class Button: SKSpriteNode {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         pressed = false
         delegate?.didReleaseButton(number: number)
+    }
+    
+    func setColor() {
+        color = unlocked ? (pressed ? UIColor.purple : UIColor.green) : UIColor.red
     }
 }
 
