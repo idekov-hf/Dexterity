@@ -11,17 +11,30 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    var numberOfButtons = 4
     var buttons: [Button] = []
+    var desiredButtonPressOrder: [Int] = []
+    var buttonPressOrder: [Int] = []
+    var pressNumber = 0 {
+        didSet {
+            if pressNumber == 8 {
+                checkOrder()
+                pressNumber = 0
+                buttonPressOrder = []
+            }
+        }
+    }
     let successLabel = SKLabelNode(fontNamed: "Chalkduster")
     
     override func didMove(to view: SKView) {
         backgroundColor = SKColor.white
-        setupButtons(total: 3)
+        setupButtons(total: numberOfButtons)
+        setupButtonPressOrder(total: numberOfButtons)
         setupSuccessLabel()
     }
     
     func setupButtons(total: Int) {
-        for number in 0...total {
+        for number in 0..<total {
             let button = Button(number: number)
             button.delegate = self
             button.position = CGPoint(x: size.width * 0.20 * CGFloat(number + 1), y: size.height * 0.5)
@@ -33,6 +46,15 @@ class GameScene: SKScene {
         }
     }
     
+    func setupButtonPressOrder(total: Int) {
+        for number in 0..<total {
+            desiredButtonPressOrder.append(number)
+        }
+        for number in (0..<total).reversed() {
+            desiredButtonPressOrder.append(number)
+        }
+    }
+    
     func setupSuccessLabel() {
         successLabel.text = "Success!"
         successLabel.fontSize = 65
@@ -41,55 +63,32 @@ class GameScene: SKScene {
         successLabel.isHidden = true
         addChild(successLabel)
     }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    }
-    
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-    }
 }
 
 extension GameScene: ButtonDelegate {
     
     func didTouchButton(number: Int) {
-        let nextNumber = number + 1
-        let previousNumber = number - 1
-        successLabel.isHidden = true
-        if buttons[number].unlocked {
-            if nextNumber < buttons.count && !buttons[nextNumber].pressed {
-                buttons[nextNumber].unlocked = true
-            } else if number == buttons.count - 1 {
-                buttons[number].canBeReleased = true
-            }
+        if number == 0 {
+            pressNumber = 0
+            buttonPressOrder = []
+            successLabel.isHidden = true
         }
-        
-        if previousNumber > -1 && buttons[previousNumber].canBeReleased {
-            buttons[previousNumber].canBeReleased = false
-        }
+        addNumberToOrder(number: number)
     }
     
     func didReleaseButton(number: Int) {
-        successLabel.isHidden = true
-        if buttons[number].unlocked {
-            for i in number + 1 ..< buttons.count {
-                buttons[i].unlocked = false
-                buttons[i].canBeReleased = false
-            }
-        }
-        
-        if buttons[number].canBeReleased {
-            buttons[number].canBeReleased = false
-            let previousNumber = number - 1
-            if previousNumber > -1 {
-                buttons[previousNumber].canBeReleased = true
-            }
-            if number == 0 {
-                successLabel.isHidden = false
-            }
+        addNumberToOrder(number: number)
+    }
+    
+    func addNumberToOrder(number: Int) {
+        buttonPressOrder.append(number)
+        pressNumber += 1
+    }
+    
+    func checkOrder() {
+        print(buttonPressOrder)
+        if (buttonPressOrder == desiredButtonPressOrder) {
+            successLabel.isHidden = false
         }
     }
 }
